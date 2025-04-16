@@ -93,8 +93,8 @@ while [ $exit_flag -eq 0 ]; do
     
 
     # 等待網路恢復（5秒）
-    echo "等待網路恢復（5秒）..."
-    sleep 5
+    echo "等待網路恢復（10秒）..."
+    sleep 10
     
 
     # Dmesg 檢查
@@ -144,6 +144,14 @@ while [ $exit_flag -eq 0 ]; do
         echo ""
     } >> "$LOG_FILE"
     
+
+    # 顯示測試狀態
+    if grep -q -i "is down\|device inaccessible" <<< "$dmesg_output" || ! echo "$ping_result" | grep -q "0% packet loss"; then
+        echo -e "${RED}發現錯誤！${NC}"
+    else
+        echo -e "${GREEN}未發現錯誤${NC}"
+    fi
+    
     # 檢查 ping 結果
     if ! echo "$ping_result" | grep -q "0% packet loss"; then
         echo -e "${RED}網路連線測試失敗！${NC}"
@@ -152,12 +160,7 @@ while [ $exit_flag -eq 0 ]; do
         echo -e "${GREEN}網路連線正常${NC}"
     fi
 
-    # 顯示測試狀態
-    if grep -q -i "is down\|device inaccessible" <<< "$dmesg_output" || ! echo "$ping_result" | grep -q "0% packet loss"; then
-        echo -e "${RED}發現錯誤！${NC}"
-    else
-        echo -e "${GREEN}未發現錯誤${NC}"
-    fi
+
     
     # 計數器增加
     counter=$((counter + 1))
