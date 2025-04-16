@@ -13,6 +13,7 @@ LOG_FILE="$SCRIPT_DIR/suspend_test_$(date +%Y%m%d_%H%M%S).log"
 # 初始化計數器
 counter=1
 counter_net=0
+counter_device_inaccessible=0
 counter_down=0
 
 
@@ -58,7 +59,7 @@ trap 'echo -e "\n${YELLOW}收到中斷信號，正在完成最後一次測試...
 exit_flag=0
 
 while [ $exit_flag -eq 0 ]; do
-    echo -e "\n${GREEN}=== 開始第 $counter 次測試，網路連線異常累計次數: $counter_net，dmesg發現down累計次數: $counter_down ===${NC}"   
+    echo -e "\n${GREEN}=== 開始第 $counter 次測試，網路連線異常累計次數: $counter_net，發現link down累計次數: $counter_down，發現device inaccessible次數：$counter_device_inaccessible ===${NC}"   
     echo -e "${YELLOW}等待 5 秒後進行下一次測試...${NC}"
     echo -e "${YELLOW}系統將在 20 秒後自動喚醒${NC}"
     sleep 5
@@ -67,7 +68,8 @@ while [ $exit_flag -eq 0 ]; do
         echo "==================================================="
         echo "測試編號: $counter"
         echo "網路連線異常累計次數: $counter_net"
-        echo "dmesg發現down累計次數: $counter_down"
+        echo "dmesg發現link down累計次數: $counter_down"
+        echo "dmesg發現device inaccessible累計次數: $counter_device_inaccessible"
         echo "開始時間: $(date)"
         echo "---------------------------------------------------"
     } >> "$LOG_FILE"
@@ -120,7 +122,7 @@ while [ $exit_flag -eq 0 ]; do
         echo "錯誤訊息檢查："
         if echo "$dmesg_output" | grep -i "device inaccessible"; then
             echo "發現裝置無法存取錯誤！"
-            counter_down=$((counter_down + 1))
+            counter_device_inaccessible=$((counter_device_inaccessible + 1))
         fi
         
         echo "---------------------------------------------------"
@@ -148,25 +150,29 @@ while [ $exit_flag -eq 0 ]; do
         echo "==================================================="
         echo ""
     } >> "$LOG_FILE"
-    
 
-    # 顯示測試狀態
-    if grep -q -i "device inaccessible" <<< "$dmesg_output" || ! echo "$ping_result" | grep -q "0% packet loss"; then
-        echo -e "${RED}發現錯誤！${NC}"
+    # 檢查device inaccessible
+    if grep -q -i "device inaccessible" <<< "$dmesg_output"; then
+        echo -e "${RED}發現錯誤：device inaccessible${NC}"
     else
-        echo -e "${GREEN}未發現錯誤${NC}"
+        echo -e "${GREEN}未發現 device inaccessible${NC}"   
     fi
     
+    # 檢查enp4s0: Link狀態
+    if grep -q -i "enp4s0: Link is Up" <<< "$dmesg_output"; then
+        echo -e "${GREEN}網路狀態：Link is Up${NC}"
+    else
+        echo -e "${RED}網路狀態：未發現 Link is Up${NC}"
+    fi
+
     # 檢查 ping 結果
     if ! echo "$ping_result" | grep -q "0% packet loss"; then
-        echo -e "${RED}網路連線測試失敗！${NC}"
-        dmesg_output="$dmesg_output\n網路連線測試失敗"
+        echo -e "${RED}網路連線測試發現loss！${NC}"
     else
         echo -e "${GREEN}網路連線正常${NC}"
     fi
 
 
-    
     # 計數器增加
     counter=$((counter + 1))
     
