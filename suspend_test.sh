@@ -91,6 +91,13 @@ while [ $exit_flag -eq 0 ]; do
     wake_time=$(date +"%Y-%m-%d %H:%M:%S")
     echo "[$wake_time] 系統喚醒"
     
+
+    # 等待網路恢復（5秒）
+    echo "等待網路恢復（5秒）..."
+    sleep 5
+    
+
+    # Dmesg 檢查
     {
         echo "睡眠開始時間: $start_time"
         echo "喚醒時間: $wake_time"
@@ -117,10 +124,7 @@ while [ $exit_flag -eq 0 ]; do
         echo "---------------------------------------------------"
     } >> "$LOG_FILE"
 
-    # 等待網路恢復（5秒）
-    echo "等待網路恢復（5秒）..."
-    sleep 5
-    
+    # Ping 檢查
     {
         echo "網路連線測試結果："
         echo ""
