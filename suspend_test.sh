@@ -58,7 +58,9 @@ exit_flag=0
 
 while [ $exit_flag -eq 0 ]; do
     echo -e "\n${GREEN}=== 開始第 $counter 次測試，網路連線異常累計次數: $counter_net，dmesg發現down累計次數: $counter_down ===${NC}"   
-    
+    echo -e "${YELLOW}等待 5 秒後進行下一次測試...${NC}"
+    echo -e "${YELLOW}系統將在 20 秒後自動喚醒${NC}"
+    sleep 5
     # 記錄測試開始
     {
         echo "==================================================="
@@ -77,7 +79,7 @@ while [ $exit_flag -eq 0 ]; do
     echo "[$start_time] 進入睡眠模式"
     
     # 使用 rtcwake 設定系統在 20 秒後喚醒並進入睡眠
-    echo -e "${YELLOW}系統將在 20 秒後自動喚醒${NC}"
+    
     
     rtcwake -m no -s 10
     systemctl suspend
@@ -156,7 +158,7 @@ while [ $exit_flag -eq 0 ]; do
     counter=$((counter + 1))
     
     echo -e "${YELLOW}等待 25 秒後進行下一次測試...${NC}"
-    sleep 25
+    sleep 20
     
     echo "-------------------"
 done
