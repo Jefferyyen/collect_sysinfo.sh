@@ -12,6 +12,8 @@ LOG_FILE="$SCRIPT_DIR/suspend_test_$(date +%Y%m%d_%H%M%S).log"
 
 # 初始化計數器
 counter=1
+counter_net=0
+counter_down=0
 exit_flag=0
 
 # 檢查是否有 root 權限
@@ -60,6 +62,7 @@ while [ $exit_flag -eq 0 ]; do
     {
         echo "==================================================="
         echo "測試編號: $counter"
+        echo "網路連線異常次數: $counter_net"
         echo "開始時間: $(date)"
         echo "---------------------------------------------------"
     } >> "$LOG_FILE"
@@ -98,6 +101,7 @@ while [ $exit_flag -eq 0 ]; do
         
         if [ $? -eq 0 ]; then
             echo "發現錯誤訊息！"
+            counter_down=$((counter_down + 1))
         else
             echo "未發現錯誤訊息"
         fi
@@ -124,6 +128,7 @@ while [ $exit_flag -eq 0 ]; do
             echo "測試結果: Pass - 網路連線正常"
         else
             echo "測試結果: Fail - 網路連線異常"
+            counter_net=$((counter_net + 1))
         fi
         
         echo "==================================================="
