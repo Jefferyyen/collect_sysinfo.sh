@@ -109,7 +109,7 @@ while [ $exit_flag -eq 0 ]; do
         
         # 先顯示錯誤相關的日誌
         echo "錯誤相關日誌："
-        echo "$dmesg_output" | grep -i "is down\|device inaccessible"   
+        echo "$dmesg_output" | grep -i "device inaccessible"   
         
         if [ $? -eq 0 ]; then
             echo "發現錯誤訊息！"
@@ -146,7 +146,7 @@ while [ $exit_flag -eq 0 ]; do
     
 
     # 顯示測試狀態
-    if grep -q -i "is down\|device inaccessible" <<< "$dmesg_output" || ! echo "$ping_result" | grep -q "0% packet loss"; then
+    if grep -q -i "device inaccessible" <<< "$dmesg_output" || ! echo "$ping_result" | grep -q "0% packet loss"; then
         echo -e "${RED}發現錯誤！${NC}"
     else
         echo -e "${GREEN}未發現錯誤${NC}"
