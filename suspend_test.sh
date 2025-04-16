@@ -59,7 +59,7 @@ trap 'echo -e "\n${YELLOW}收到中斷信號，正在完成最後一次測試...
 exit_flag=0
 
 while [ $exit_flag -eq 0 ]; do
-    echo -e "\n${GREEN}=== 開始第 $counter 次測試，網路連線異常累計次數: $counter_net，發現link down累計次數: $counter_down，發現device inaccessible次數：$counter_device_inaccessible ===${NC}"   
+    echo -e "\n${GREEN}=== 開始第 $counter 次測試，發現device inaccessible次數：$counter_device_inaccessible，發現link down累計次數: $counter_down，ping test異常累計次數: $counter_net ===${NC}"   
     echo -e "${YELLOW}等待 5 秒後進行下一次測試...${NC}"
     echo -e "${YELLOW}系統將在 20 秒後自動喚醒${NC}"
     sleep 5
@@ -111,10 +111,10 @@ while [ $exit_flag -eq 0 ]; do
         
         # 檢查網路介面狀態
         echo "網路介面狀態："
-        if echo "$dmesg_output" | grep -i "enp4s0: Link is Up"; then
-            echo "enp4s0: Link is Up"
+        if echo "$dmesg_output" | grep -i "enp4s0: Link Up"; then
+            echo "enp4s0: Link Up"
         else
-            echo "未偵測到enp4s0: Link is Up"
+            echo "未偵測到enp4s0: Link Up"
             counter_down=$((counter_down + 1))
         fi
 
@@ -159,10 +159,10 @@ while [ $exit_flag -eq 0 ]; do
     fi
     
     # 檢查enp4s0: Link狀態
-    if grep -q -i "enp4s0: Link is Up" <<< "$dmesg_output"; then
-        echo -e "${GREEN}enp4s0:Link is Up${NC}"
+    if grep -q -i "enp4s0: Link Up" <<< "$dmesg_output"; then
+        echo -e "${GREEN}enp4s0:Link Up${NC}"
     else
-        echo -e "${RED}未發現enp4s0:Link is Up${NC}"
+        echo -e "${RED}未發現enp4s0:Link Up${NC}"
     fi
 
     # 檢查 ping 結果
