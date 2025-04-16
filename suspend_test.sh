@@ -14,7 +14,7 @@ LOG_FILE="$SCRIPT_DIR/suspend_test_$(date +%Y%m%d_%H%M%S).log"
 counter=1
 counter_net=0
 counter_down=0
-exit_flag=0
+
 
 # 檢查是否有 root 權限
 if [ "$EUID" -ne 0 ]; then 
@@ -54,15 +54,17 @@ echo -e "${YELLOW}按 Ctrl+C 可以安全地結束測試${NC}"
 
 # 捕捉 Ctrl+C 信號
 trap 'echo -e "\n${YELLOW}收到中斷信號，正在完成最後一次測試...${NC}"; exit_flag=1' SIGINT SIGTERM
+exit_flag=0
 
 while [ $exit_flag -eq 0 ]; do
-    echo -e "\n${GREEN}=== 開始第 $counter 次測試 ===${NC}"
+    echo -e "\n${GREEN}=== 開始第 $counter 次測試，網路連線異常累計次數: $counter_net，dmesg發現down累計次數: $counter_down ===${NC}"   
     
     # 記錄測試開始
     {
         echo "==================================================="
         echo "測試編號: $counter"
-        echo "網路連線異常次數: $counter_net"
+        echo "網路連線異常累計次數: $counter_net"
+        echo "dmesg發現down累計次數: $counter_down"
         echo "開始時間: $(date)"
         echo "---------------------------------------------------"
     } >> "$LOG_FILE"
