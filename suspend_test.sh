@@ -107,15 +107,20 @@ while [ $exit_flag -eq 0 ]; do
         # 保存並檢查 dmesg 輸出
         dmesg_output=$(dmesg -T)
         
-        # 先顯示錯誤相關的日誌
-        echo "錯誤相關日誌："
-        echo "$dmesg_output" | grep -i "device inaccessible"   
-        
-        if [ $? -eq 0 ]; then
-            echo "發現錯誤訊息！"
-            counter_down=$((counter_down + 1))
+        # 檢查網路介面狀態
+        echo "網路介面狀態："
+        if echo "$dmesg_output" | grep -i "enp4s0: Link is Up"; then
+            echo "網路介面已恢復正常"
         else
-            echo "未發現錯誤訊息"
+            echo "未偵測到網路介面恢復"
+            counter_down=$((counter_down + 1))
+        fi
+
+        # 檢查錯誤訊息
+        echo "錯誤訊息檢查："
+        if echo "$dmesg_output" | grep -i "device inaccessible"; then
+            echo "發現裝置無法存取錯誤！"
+            counter_down=$((counter_down + 1))
         fi
         
         echo "---------------------------------------------------"
