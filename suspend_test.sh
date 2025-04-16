@@ -112,9 +112,9 @@ while [ $exit_flag -eq 0 ]; do
         # 檢查網路介面狀態
         echo "網路介面狀態："
         if echo "$dmesg_output" | grep -i "enp4s0: Link is Up"; then
-            echo "網路介面已恢復正常"
+            echo "enp4s0: Link is Up"
         else
-            echo "未偵測到網路介面恢復"
+            echo "未偵測到enp4s0: Link is Up"
             counter_down=$((counter_down + 1))
         fi
 
@@ -160,16 +160,16 @@ while [ $exit_flag -eq 0 ]; do
     
     # 檢查enp4s0: Link狀態
     if grep -q -i "enp4s0: Link is Up" <<< "$dmesg_output"; then
-        echo -e "${GREEN}網路狀態：Link is Up${NC}"
+        echo -e "${GREEN}enp4s0:Link is Up${NC}"
     else
-        echo -e "${RED}網路狀態：未發現 Link is Up${NC}"
+        echo -e "${RED}未發現enp4s0:Link is Up${NC}"
     fi
 
     # 檢查 ping 結果
     if ! echo "$ping_result" | grep -q "0% packet loss"; then
-        echo -e "${RED}網路連線測試發現loss！${NC}"
+        echo -e "${RED}ping test發現loss！${NC}"
     else
-        echo -e "${GREEN}網路連線正常${NC}"
+        echo -e "${GREEN}ping test正常${NC}"
     fi
 
 
