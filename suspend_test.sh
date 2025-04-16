@@ -44,6 +44,7 @@ fi
     echo "Suspend 測試日誌"
     echo "開始時間: $(date)"
     echo "系統資訊: $(uname -a)"
+    echo "網路卡資訊: $(ethtool -i enp4s0)"
     echo "==================================================="
     echo ""
 } > "$LOG_FILE"
