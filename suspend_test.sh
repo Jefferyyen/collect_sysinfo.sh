@@ -140,11 +140,11 @@ while [ $exit_flag -eq 0 ]; do
         echo "$ping_result"
         
         # 檢查並記錄 ping 測試結果
-        if echo "$ping_result" | grep -q "0% packet loss"; then
-            echo "測試結果: Pass - 網路連線正常"
-        else
+        if echo "$ping_result" | grep -q "100% packet loss"; then
             echo "測試結果: Fail - 網路連線異常"
             counter_net=$((counter_net + 1))
+        else
+            echo "測試結果: Pass - 網路連線正常"
         fi
         
         echo "==================================================="
@@ -166,7 +166,7 @@ while [ $exit_flag -eq 0 ]; do
     fi
 
     # 檢查 ping 結果
-    if ! echo "$ping_result" | grep -q "0% packet loss"; then
+    if echo "$ping_result" | grep -q "100% packet loss"; then
         echo -e "${RED}ping test發現loss！${NC}"
     else
         echo -e "${GREEN}ping test正常${NC}"
